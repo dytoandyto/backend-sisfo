@@ -16,10 +16,11 @@ return new class extends Migration
             $table->string('item_code')->nullable();
             $table->string('item_name');
             $table->string('item_brand');
+            $table->string('image')->nullable(); 
 
             $table->foreignId('item_category')->constrained('categories')->onDelete('cascade');
             $table->foreignId('loan_id')->nullable()->constrained('loans')->onDelete('cascade');
-            
+
             $table->integer('quantity');
             $table->timestamps();
         });

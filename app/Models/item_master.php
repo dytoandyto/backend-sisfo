@@ -11,6 +11,7 @@ class item_master extends Model
         'item_name',
         'item_code',
         'item_brand',
+        'image',
         'item_category',
         'quantity',
     ];

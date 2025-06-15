@@ -52,8 +52,13 @@ class ItemMasterController extends Controller
             "item_code" => "required",
             "item_brand" => "required",
             "item_category" => "required",
-            "quantity" => "required"
+            "quantity" => "required",
+            "image" => "required"
         ]);
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('images', 'public');// jadi ini akan di simpan di folder public/images
+            $validated['image'] = $imagePath;
+        }
         $item_master = item_master::create($validated);
         return response()->json([
             'success' => true,
