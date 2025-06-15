@@ -45,7 +45,8 @@ class ItemMasterController extends Controller
      */
     public function create(Request $request)
     {
-        $request->validate([
+        //membuat item baru
+        $validated = $request->validate([
             "item_code" => "required|unique:item_master",
             "item_name" => "required",
             "item_code" => "required",
@@ -53,10 +54,11 @@ class ItemMasterController extends Controller
             "item_category" => "required",
             "quantity" => "required"
         ]);
-        item_master::create($request->all());
+        $item_master = item_master::create($validated);
         return response()->json([
+            'success' => true,
             'message' => 'Item  berhasil dibuat',
-            'data' => $request->all()
+            'data' => $item_master
         ]);
     }
 

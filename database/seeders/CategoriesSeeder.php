@@ -25,5 +25,9 @@ class CategoriesSeeder extends Seeder
             'name_category' => 'Alat musik',
             'description' => 'alat musik dari ruang musik'
         ]);
+        categories::create([
+            'name_category' => 'Alat tulis',
+            'description' => 'alat tulis'
+        ]);
     }
 }

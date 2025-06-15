@@ -34,5 +34,33 @@ class ItemMasterSeeder extends Seeder
             'item_category' => 3,
             'quantity' => 10
         ]);
+        item_master::create([
+            'item_code' => '004',
+            'item_name' => 'Piano',
+            'item_brand' => 'Yamaha',
+            'item_category' => 4,
+            'quantity' => 10
+        ]);
+        item_master::create([
+            'item_code' => '005',
+            'item_name' => 'Kes',
+            'item_brand' => 'Yamaha',
+            'item_category' => 4,
+            'quantity' => 10
+        ]);
+        item_master::create([
+            'item_code' => '006',
+            'item_name' => 'Tabur',
+            'item_brand' => 'Yamaha',
+            'item_category' => 4,
+            'quantity' => 10
+        ]);
+        item_master::create([
+            'item_code' => '007',
+            'item_name' => 'Spidol',
+            'item_brand' => 'FaberCastle',
+            'item_category' => 4,
+            'quantity' => 20
+        ]);
     }
 }

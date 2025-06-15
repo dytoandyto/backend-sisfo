@@ -12,19 +12,13 @@ class LoanController extends Controller
      */
     public function index()
     {
-        $loan = loan::all();
+        $loan = loan::with(['user', 'item'])->get();
         if (!$loan->isEmpty()) {
             return response()->json([
                 'success' => true,
                 'message' => 'List semua Peminjaman',
                 'data' => $loan
             ]);
-        } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Peminjaman tidak ditemukan',
-                'data' => 'Peminjaman tidak tersedia'
-            ], 404);
         }
     }
 

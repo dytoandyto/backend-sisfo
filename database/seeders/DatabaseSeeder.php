@@ -18,8 +18,8 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             CategoriesSeeder::class,
             ItemMasterSeeder::class,
-            // loanSeeder::class,
-            // returnSeeder::class
+            loanSeeder::class,
+            returnSeeder::class
         ]);
     }
 }

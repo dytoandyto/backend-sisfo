@@ -20,14 +20,8 @@ class loan extends Model
     {
         return $this->belongsTo(User::class, 'id_user');
     }
-
     public function item()
     {
         return $this->belongsTo(item_master::class, 'id_item');
-    }
-
-    public function admin()
-    {
-        return $this->belongsTo(User::class, 'id_admin');
     }
 }

@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -20,10 +21,28 @@ return new class extends Migration
             $table->unsignedBigInteger('id_item');
             $table->foreign('id_item')->references('id')->on('item_masters')->onDelete('cascade');
             $table->date('return_date');
+            $table->date('date_returned');
             $table->text('notes')->nullable();
+            $table->integer('quantity');
             $table->string('condition');
             $table->timestamps();
         });
+
+        DB::unprepared('
+            CREATE TRIGGER update_quantity_after_return
+            AFTER INSERT ON return_items
+            FOR EACH ROW
+            BEGIN
+                UPDATE item_masters
+                SET quantity = quantity + NEW.quantity
+                WHERE id = NEW.id_item;
+
+                UPDATE loans
+                SET status = "returned"
+                WHERE id = NEW.id_loan;
+            END;
+        ');
+
     }
 
     /**
@@ -31,6 +50,7 @@ return new class extends Migration
      */
     public function down(): void
     {
+        DB::unprepared('DROP TRIGGER IF EXISTS update_quantity_after_return');
         Schema::dropIfExists('return_items');
     }
 };

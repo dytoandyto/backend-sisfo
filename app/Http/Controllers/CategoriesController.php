@@ -48,7 +48,7 @@ class CategoriesController extends Controller
     {
         //membuat category baru
         $validated = $request->validate([
-            "   " => "required",
+            "name_category" => "required",
             "description" => "required"
         ]);
         $categories = categories::create($validated);

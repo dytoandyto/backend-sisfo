@@ -12,17 +12,12 @@ class ReturnItemController extends Controller
      */
     public function index()
     {
-        $return_item = return_item::all();
+        $return_item = return_item::with(['user', 'item'])->get();
         if (!$return_item->isEmpty()) {
             return response([
                 'message' => 'List semua pengembalian',
                 'data' => $return_item
             ], 200);
-        } else {
-            return response([
-                'message' => 'Data pengembalian tidak ditemukan',
-                'data' => null
-            ], 404);
         }
     }
 

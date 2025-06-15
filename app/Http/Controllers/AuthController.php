@@ -21,8 +21,7 @@ class AuthController extends Controller
             'user' => $user
         ];
     }
-    public function profile(){
-    }
+    public function profile() {}
 
     public function login(Request $request)
     {
@@ -54,4 +53,32 @@ class AuthController extends Controller
             'message' => 'You have been logged out'
         ];
     }
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+        return response()->json([
+            'success' => true,
+            'message' => 'User berhasil dihapus',
+            'data' => $user
+        ]);
+    }
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,'.$id,
+            'password' => 'required|confirmed',
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->update($request->all());
+
+        return response()->json([
+            'success' => true,
+            'message' => 'User berhasil diupdate',
+            'data' => $user
+        ]);
+    }
+
 }
