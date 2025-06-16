@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\loan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LoanController extends Controller
 {
@@ -58,10 +59,20 @@ class LoanController extends Controller
         ]);
         $loan = loan::create($validated);
         return response()->json([
-           'success' => true,
-           'message' => 'Peminjaman berhasil dibuat',
-            'data' => $loan
-        ],201);
+            'status' => true,
+            'success' => true,
+            'message' => 'Peminjaman berhasil dibuat',
+            'data' => [$loan],
+            // jika ingin detail barang yang dipinjam
+            'item' => [
+                'id' => $loan->item->id,
+                'item_code' => $loan->item->item_code,
+                'item_name' => $loan->item->item_name,
+                'item_brand' => $loan->item->item_brand,
+                'quantity' => $loan->item->quantity,
+            ],
+
+        ], 201);
     }
 
 
@@ -127,8 +138,8 @@ class LoanController extends Controller
         $loan->status = 'approve';
         $loan->save();
         return response()->json([
-          'success' => true,
-          'message' => 'Peminjaman berhasil di approve',
+            'success' => true,
+            'message' => 'Peminjaman berhasil di approve',
             'data' => $loan
         ]);
     }
@@ -138,8 +149,8 @@ class LoanController extends Controller
         $loan->status = 'reject';
         $loan->save();
         return response()->json([
-         'success' => true,
-         'message' => 'Peminjaman di reject',
+            'success' => true,
+            'message' => 'Peminjaman di reject',
             'data' => $loan
         ]);
     }
@@ -233,6 +244,60 @@ class LoanController extends Controller
             return response()->json([
                 'message' => 'History Peminjaman tidak ditemukan',
                 'data' => ''
+            ]);
+        }
+    }
+
+    public function showUserLoans()
+    {
+        $user = Auth::user();
+        $loans = loan::where('id_user', $user->id)->with(['item'])->get();
+        if (!$loans->isEmpty()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'List Peminjaman Anda',
+                'data' => $loans
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Anda belum melakukan peminjaman',
+                'data' => []
+            ]);
+        }
+    }
+
+    public function notification()
+    {
+        $loans = loan::where('status', 'approve')->get();
+        if (!$loans->isEmpty()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Peminjaman yang sudah di approve, Silahkan ambil barangnya',
+                'data' => $loans
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak ada Peminjaman yang sudah di approve',
+                'data' => []
+            ]);
+        }
+    }
+    public function notificationRejected()
+    {
+        $loans = loan::where('status', 'reject')->get();
+        if (!$loans->isEmpty()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Peminjaman anda di reject oleh admin',
+                'data' => $loans
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak ada Peminjaman yang sudah di reject',
+                'data' => []
             ]);
         }
     }

@@ -69,7 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/loans/{loan}/history/{history}/edit', [LoanController::class, 'historyUpdate']); //mengedit history loan berdasarkan id
     Route::delete('/admin/loans/{loan}/history/{history}/delete', [LoanController::class, 'historyDestroy']); //menghapus history loan berdasarkan id
 
-    Route::get('/admin/return',[ReturnItemController::class, 'index']); //menampilkan semua return
+    Route::get('/admin/return', [ReturnItemController::class, 'index']); //menampilkan semua return
     Route::get('/admin/return/return/{return}', [ReturnItemController::class, 'show']);
     Route::post('/return/return/{return}', [ReturnItemController::class, 'create']);
     Route::get('/admin/return/{loan}/return/{return}/edit', [ReturnItemController::class, 'update']);
@@ -78,16 +78,21 @@ Route::middleware('auth:sanctum')->group(function () {
 
 //user
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', [UserController::class, 'user']);
-    Route::get('/profile', [UserController::class, 'profile']);
-    Route::get('/user/categories', [CategoriesController::class, 'index']); //menampilkan semua category
-    Route::get('/user/categories/{category}', [CategoriesController::class, 'show']); //menampilkan category berdasarkan id
+
+    Route::get('/user', [UserController::class, 'user']); //menampilkan user yang sedang login
+    Route::get('/profile', [UserController::class, 'profile']); //menampilkan profile user
+    Route::post('/profile/edit', [UserController::class, 'update']); //mengedit profile user
+
     Route::get('/user/units', [ItemMasterController::class, 'index']); //menampilkan semua unit
     Route::get('/user/units/{unit}', [ItemMasterController::class, 'show']); //menampilkan unit berdasarkan id
 
-    Route::get('/user/loans', [LoanController::class, 'index']); //menampilkan semua loan
-    Route::get('/user/loans/{loan}', [LoanController::class, 'show']); //menampilkan loan berdasarkan id
     Route::post('/user/loans', [LoanController::class, 'create']); //membuat loan
+    Route::get('/profile/loans', [LoanController::class, 'showUserLoans']); //menampilkan loan dari user yang sedang login
 
+    Route::get('/profile/loans/notification', [LoanController::class, 'notification']); //menampilkan notifikasi loan yang sudah di approve
+    Route::get('/profile/loans/notification/rejected', [LoanController::class, 'notificationRejected']); //menampilkan notifikasi loan yang ditolak
+
+    Route::post('/profile/return', [ReturnItemController::class, 'create']); //membuat return item
+    Route::get('/profile/return', [ReturnItemController::class, 'profileIndex']); //menampilkan semua return item
 
 });

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_item');
             $table->foreign('id_item')->references('id')->on('item_masters')->onDelete('cascade');
             $table->date('return_date');
-            $table->date('date_returned');
+            $table->date('date_returned')->nullable();
             $table->text('notes')->nullable();
             $table->integer('quantity');
             $table->string('condition');
@@ -38,7 +38,7 @@ return new class extends Migration
                 WHERE id = NEW.id_item;
 
                 UPDATE loans
-                SET status = "returned"
+                SET status = "returned" 
                 WHERE id = NEW.id_loan;
             END;
         ');

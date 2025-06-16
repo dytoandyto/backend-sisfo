@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\return_item;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReturnItemController extends Controller
 {
@@ -18,6 +19,23 @@ class ReturnItemController extends Controller
                 'message' => 'List semua pengembalian',
                 'data' => $return_item
             ], 200);
+        }
+    }
+
+    public function profileIndex()
+    {
+        $user = Auth::user();
+        $return_item = return_item::where('id_user', $user->id)->with(['item'])->get();
+        if (!$return_item->isEmpty()) {
+            return response([
+                'message' => 'List semua pengembalian',
+                'data' => $return_item
+            ], 200);
+        } else {
+            return response([
+                'message' => 'Tidak ada data pengembalian',
+                'data' => null
+            ], 404);
         }
     }
 
@@ -42,13 +60,14 @@ class ReturnItemController extends Controller
     public function create(Request $request)
     {
         $validated = $request->validate([
-            "id_loan" => "",
-            "id_user" => "",
-            "id_item" => "",
-            "return_date" => "",
-            "quantity" => "",
-            "note" => "",
-            "condition" => "",
+            "id_loan" => "required",
+            "id_user" => "required",
+            "id_item" => "required",
+            "return_date" => "required",
+            "date_returned" => "required|nullable",
+            "quantity" => "required",
+            "notes" => "required",
+            "condition" => "required",
         ]);
         $return_item = return_item::create($validated);
         if ($return_item) {
