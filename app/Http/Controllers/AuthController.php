@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\user;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -21,7 +22,17 @@ class AuthController extends Controller
             'user' => $user
         ];
     }
-    public function profile() {}
+    public function profile($id) {
+        $user = User::findOrFail($id);
+        return response()->json([
+            'message' => 'Profile user',
+            'user' => [
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+            ]
+        ]);
+    }
 
     public function login(Request $request)
     {
@@ -68,7 +79,7 @@ class AuthController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,'.$id,
-            'password' => 'required|confirmed',
+            'password' => 'nullable|confirmed',
         ]);
 
         $user = User::findOrFail($id);

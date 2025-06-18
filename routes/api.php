@@ -51,7 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/units', [ItemMasterController::class, 'index']); //menampilkan semua unit
     Route::get('/admin/units/{unit}', [ItemMasterController::class, 'show']); //menampilkan unit berdasarkan id
     Route::post('/admin/units/create', [ItemMasterController::class, 'create']); //membuat unit
-    Route::put('/admin/units/edit/{unit}', [ItemMasterController::class, 'update']); //mengedit unit berdasarkan id
+    Route::post('/admin/units/edit/{unit}', [ItemMasterController::class, 'update']); //mengedit unit berdasarkan id
     Route::delete('/admin/units/delete/{unit}', [ItemMasterController::class, 'destroy']); //menghapus unit berdasarkan id
 
     Route::get('/admin/loans', [LoanController::class, 'index']); //menampilkan semua loan
@@ -87,7 +87,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/units/{unit}', [ItemMasterController::class, 'show']); //menampilkan unit berdasarkan id
 
     Route::post('/user/loans', [LoanController::class, 'create']); //membuat loan
+    Route::get('/user/loans/active', [LoanController::class, 'active']); //
     Route::get('/profile/loans', [LoanController::class, 'showUserLoans']); //menampilkan loan dari user yang sedang login
+    
 
     Route::get('/profile/loans/notification', [LoanController::class, 'notification']); //menampilkan notifikasi loan yang sudah di approve
     Route::get('/profile/loans/notification/rejected', [LoanController::class, 'notificationRejected']); //menampilkan notifikasi loan yang ditolak

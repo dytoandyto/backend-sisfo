@@ -26,12 +26,15 @@ class ItemMasterController extends Controller
 
     public function show($id)
     {
-        $item_master = item_master::find($id);
+        $item_master = item_master::with('category')->find($id);
         if ($item_master) {
             $item_master->image = $item_master->image ? asset('storage/' . $item_master->image) : null;
+            // Ganti item_category dengan nama kategori
+            $item_master->item_category = $item_master->category ? $item_master->category->name_category : null;
+            unset($item_master->category); // opsional, agar relasi tidak ikut di response
             return response()->json([
                 'success' => true,
-                'message' => 'Detail Item', 
+                'message' => 'Detail Item',
                 'data' => $item_master
             ], 200);
         } else {
@@ -72,7 +75,7 @@ class ItemMasterController extends Controller
         ]);
     }
 
-    /**
+    /** 
      * Store a newly created resource in storage.
      */
     public function store($id)
@@ -114,6 +117,18 @@ class ItemMasterController extends Controller
         $item_master->item_brand = $request->item_brand;
         $item_master->item_category = $request->item_category;
         $item_master->quantity = $request->quantity;
+
+        // Handle upload gambar
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('images', 'public');
+            $item_master->image = $imagePath;
+        } else {
+            // Jika tidak ada gambar baru, tetap simpan gambar lama
+            $item_master->image = $item_master->image ? $item_master->image : null;
+        }
+        // Simpan perubahan
+        // $item_master->item_category = $item_master->category ? $item_master->category->name_category : null;
+        unset($item_master->category); // opsional, agar rel
         $item_master->save();
         return response()->json([
             'success' => true,
@@ -121,7 +136,6 @@ class ItemMasterController extends Controller
             'data' => $item_master
         ]);
     }
-
     /**
      * Remove the specified resource from storage.
      */

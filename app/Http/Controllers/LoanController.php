@@ -44,6 +44,21 @@ class LoanController extends Controller
         }
     }
 
+    public function active()
+    {
+        $user = Auth::user();
+
+        $loans = Loan::with('item') // pastikan relasi item() sudah didefinisikan di model Loan
+            ->where('id_user', $user->id)
+            ->whereIn('status', ['approve'])
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Daftar pinjaman aktif',
+            'data' => $loans
+        ]);
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -251,8 +266,25 @@ class LoanController extends Controller
     public function showUserLoans()
     {
         $user = Auth::user();
-        $loans = loan::where('id_user', $user->id)->with(['item'])->get();
+        $loans = loan::where('id_user', $user->id)->with(['item.category'])->get();
         if (!$loans->isEmpty()) {
+            $loans->transform(function ($loan) {
+                // Tambahkan url gambar
+                if ($loan->item && $loan->item->image) {
+                    $loan->item->image_url = asset('storage/' . $loan->item->image);
+                } else {
+                    $loan->item->image_url = null;
+                }
+                // Ubah kategori menjadi string (nama kategori)
+                if ($loan->item && $loan->item->category) {
+                    $loan->item->item_category = $loan->item->category->name;
+                } else {
+                    $loan->item->item_category = null;
+                }
+                // Jika ingin menghapus field id kategori (opsional)
+                // unset($loan->item->item_category_id);
+                return $loan;
+            });
             return response()->json([
                 'success' => true,
                 'message' => 'List Peminjaman Anda',
@@ -269,8 +301,13 @@ class LoanController extends Controller
 
     public function notification()
     {
-        $loans = loan::where('status', 'approve')->get();
+        $loans = loan::where('status', 'approve')->with('item')->get();
         if (!$loans->isEmpty()) {
+            // Tambahkan nama barang ke setiap data loan
+            $loans->transform(function ($loan) {
+                $loan->item_name = $loan->item ? $loan->item->item_name : null;
+                return $loan;
+            });
             return response()->json([
                 'success' => true,
                 'message' => 'Peminjaman yang sudah di approve, Silahkan ambil barangnya',
