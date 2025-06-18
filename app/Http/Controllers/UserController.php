@@ -28,11 +28,10 @@ class UserController extends Controller
             ]
         ]);
     }
-
-    public function update(User $user) //update tidak harus semua disisi
+    public function update(Request $request)
     {
         $user = Auth::user();
-        $data = request()->validate([
+        $data = $request->validate([
             'name' => 'sometimes|string|max:255',
             'email' => 'sometimes|email|max:255|unique:users,email,' . $user->id,
             'password' => 'sometimes|string|min:8|confirmed',

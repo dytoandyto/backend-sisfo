@@ -12,24 +12,26 @@ class ItemMasterController extends Controller
      */
     public function index()
     {
-        $item_master = item_master::all();
-        return response()->json($item_master);
-        if ($item_master) {
-            return response()->json([
-                'message' => 'List semua Item',
-                'data' => $item_master
-            ]);
-        }
+        $item_master = item_master::with('category')->get()->map(function ($item) {
+            $item->image = $item->image ? asset('storage/' . $item->image) : null;
+            // Ganti item_category dengan nama kategori
+            $item->item_category = $item->category ? $item->category->name_category : null;
+            unset($item->category); // opsional, agar relasi tidak ikut di response
+            return $item;
+        });
+        return response()->json([
+            'data' => $item_master
+        ]);
     }
 
     public function show($id)
     {
-        //menampilkan item berdasarkan id
         $item_master = item_master::find($id);
         if ($item_master) {
+            $item_master->image = $item_master->image ? asset('storage/' . $item_master->image) : null;
             return response()->json([
                 'success' => true,
-                'message' => 'Detail Item',
+                'message' => 'Detail Item', 
                 'data' => $item_master
             ], 200);
         } else {
@@ -45,7 +47,6 @@ class ItemMasterController extends Controller
      */
     public function create(Request $request)
     {
-        //membuat item baru
         $validated = $request->validate([
             "item_code" => "required|unique:item_master",
             "item_name" => "required",
@@ -56,13 +57,17 @@ class ItemMasterController extends Controller
             "image" => "required"
         ]);
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('images', 'public');// jadi ini akan di simpan di folder public/images
+            $imagePath = $request->file('image')->store('images', 'public');
             $validated['image'] = $imagePath;
         }
         $item_master = item_master::create($validated);
+
+        // Tambahkan URL gambar pada response
+        $item_master->image = $item_master->image ? asset('storage/' . $item_master->image) : null;
+
         return response()->json([
             'success' => true,
-            'message' => 'Item  berhasil dibuat',
+            'message' => 'Item berhasil dibuat',
             'data' => $item_master
         ]);
     }

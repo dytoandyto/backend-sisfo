@@ -16,7 +16,7 @@ return [
     */
 
     'paths' => ['api/*', 'storage/*'],
-    'allowed_origins' => ['http://localhost:3000'], // frontend Next.js
+    'allowed_origins' => ['*'], // frontend Next.js
 
     'allowed_methods' => ['*'],
 

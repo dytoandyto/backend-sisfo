@@ -23,9 +23,9 @@ class UserSeeder extends Seeder
             'updated_at' => Carbon::parse('2025-06-07 10:00:00'),
         ]);
         User::create([
-            'name' => 'Andi',
-            'email' => 'andi@gmail.com',
-            'password' => bcrypt('andi123'),
+            'name' => 'andy',
+            'email' => 'andy@gmail.com',
+            'password' => bcrypt('andy123'),
             'created_at' => Carbon::parse('2025-06-07 10:00:00'),
             'updated_at' => Carbon::parse('2025-06-07 10:00:00'),
         ]);
