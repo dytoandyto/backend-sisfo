@@ -110,7 +110,7 @@ class ItemMasterController extends Controller
             "quantity" => "required"
         ]);
 
-        $item_master = item_master::findOrFail($id);
+        $item_master = item_master::with('category')->findOrFail($id);
         $item_master->item_code = $request->item_code;
         $item_master->item_name = $request->item_name;
         $item_master->item_code = $request->item_code;
@@ -130,11 +130,17 @@ class ItemMasterController extends Controller
         // $item_master->item_category = $item_master->category ? $item_master->category->name_category : null;
         unset($item_master->category); // opsional, agar rel
         $item_master->save();
+
+        // Tambahkan url gambar dan kategori string pada response
+        $item_master->image = $item_master->image ? asset('storage/' . $item_master->image) : null;
+        $item_master->item_category = $item_master->category ? $item_master->category->name_category : $item_master->item_category;
+        unset($item_master->category);
+
         return response()->json([
             'success' => true,
             'message' => 'Item berhasil diupdate',
             'data' => $item_master
-        ]);
+        ], 200);
     }
     /**
      * Remove the specified resource from storage.
